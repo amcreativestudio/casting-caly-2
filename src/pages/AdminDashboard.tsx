@@ -18,6 +18,7 @@ interface CastingSubmission {
   gender: string;
   phone: string;
   province: string;
+  profile_type?: string;
   motivation: string;
   photos: string[];
   cv_portfolio?: string;
@@ -180,6 +181,9 @@ const AdminDashboard = () => {
     yPosition += lineHeight;
     
     doc.text(`Província: ${submission.province}`, 20, yPosition);
+    yPosition += lineHeight;
+    
+    doc.text(`Perfil: ${submission.profile_type || "Não informado"}`, 20, yPosition);
     yPosition += lineHeight;
     
     doc.text(`Data de Inscrição: ${format(new Date(submission.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}`, 20, yPosition);
@@ -525,16 +529,20 @@ const AdminDashboard = () => {
                   <label className="text-sm font-medium text-gray-700">Telefone</label>
                   <p className="text-gray-900">{selectedSubmission.phone}</p>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700">Província</label>
-                  <p className="text-gray-900">{selectedSubmission.province}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700">Data de Inscrição</label>
-                  <p className="text-gray-900">
-                    {format(new Date(selectedSubmission.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
-                  </p>
-                </div>
+                 <div>
+                   <label className="text-sm font-medium text-gray-700">Província</label>
+                   <p className="text-gray-900">{selectedSubmission.province}</p>
+                 </div>
+                 <div>
+                   <label className="text-sm font-medium text-gray-700">Perfil</label>
+                   <p className="text-gray-900">{selectedSubmission.profile_type || "Não informado"}</p>
+                 </div>
+                 <div>
+                   <label className="text-sm font-medium text-gray-700">Data de Inscrição</label>
+                   <p className="text-gray-900">
+                     {format(new Date(selectedSubmission.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                   </p>
+                 </div>
               </div>
               
               <div>

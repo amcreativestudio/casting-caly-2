@@ -83,6 +83,7 @@ export const useCastingSubmission = () => {
           gender: formData.sexo,
           phone: formData.telefone,
           province: formData.provincia,
+          profile_type: formData.perfil,
           motivation: formData.motivacao,
           photos: photoPaths,
           cv_portfolio: cvPath.length > 0 ? cvPath[0] : null,

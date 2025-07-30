@@ -52,6 +52,7 @@ export type Database = {
           motivation: string
           phone: string
           photos: string[]
+          profile_type: string | null
           province: string
           updated_at: string
         }
@@ -65,6 +66,7 @@ export type Database = {
           motivation: string
           phone: string
           photos: string[]
+          profile_type?: string | null
           province: string
           updated_at?: string
         }
@@ -78,6 +80,7 @@ export type Database = {
           motivation?: string
           phone?: string
           photos?: string[]
+          profile_type?: string | null
           province?: string
           updated_at?: string
         }
