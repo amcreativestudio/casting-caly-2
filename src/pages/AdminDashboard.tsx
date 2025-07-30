@@ -34,6 +34,7 @@ const AdminDashboard = () => {
   const [adminProfile, setAdminProfile] = useState<AdminProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedSubmission, setSelectedSubmission] = useState<CastingSubmission | null>(null);
+  const [submissionPhotos, setSubmissionPhotos] = useState<string[]>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -127,6 +128,28 @@ const AdminDashboard = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const loadSubmissionPhotos = async (submission: CastingSubmission) => {
+    try {
+      const photoUrls = await Promise.all(
+        submission.photos.map(async (photoPath) => {
+          const { data } = supabase.storage
+            .from("casting-files")
+            .getPublicUrl(photoPath);
+          return data.publicUrl;
+        })
+      );
+      setSubmissionPhotos(photoUrls);
+    } catch (error) {
+      console.error("Error loading photos:", error);
+      setSubmissionPhotos([]);
+    }
+  };
+
+  const handleViewSubmission = async (submission: CastingSubmission) => {
+    setSelectedSubmission(submission);
+    await loadSubmissionPhotos(submission);
   };
 
   const generatePDF = (submission: CastingSubmission) => {
@@ -361,7 +384,7 @@ const AdminDashboard = () => {
                            <Button
                              size="sm"
                              variant="outline"
-                             onClick={() => setSelectedSubmission(submission)}
+                             onClick={() => handleViewSubmission(submission)}
                              className="border-blue-200 text-blue-700 hover:bg-blue-50"
                            >
                              <Eye className="h-3 w-3" />
@@ -402,7 +425,10 @@ const AdminDashboard = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setSelectedSubmission(null)}
+                  onClick={() => {
+                    setSelectedSubmission(null);
+                    setSubmissionPhotos([]);
+                  }}
                 >
                   ✕
                 </Button>
@@ -446,8 +472,21 @@ const AdminDashboard = () => {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-700">Fotos</label>
-                <p className="text-gray-600">{selectedSubmission.photos.length} foto(s) anexada(s)</p>
+                <label className="text-sm font-medium text-gray-700">Fotos ({selectedSubmission.photos.length})</label>
+                <div className="mt-2 grid grid-cols-2 gap-3">
+                  {submissionPhotos.map((photoUrl, index) => (
+                    <div key={index} className="relative">
+                      <img
+                        src={photoUrl}
+                        alt={`Foto ${index + 1} de ${selectedSubmission.full_name}`}
+                        className="w-full h-32 object-cover rounded-lg border"
+                        onError={(e) => {
+                          e.currentTarget.src = '/placeholder.svg';
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {selectedSubmission.cv_portfolio && (
@@ -460,7 +499,10 @@ const AdminDashboard = () => {
               <div className="flex justify-end space-x-2 pt-4 border-t">
                 <Button
                   variant="outline"
-                  onClick={() => setSelectedSubmission(null)}
+                  onClick={() => {
+                    setSelectedSubmission(null);
+                    setSubmissionPhotos([]);
+                  }}
                 >
                   Fechar
                 </Button>
