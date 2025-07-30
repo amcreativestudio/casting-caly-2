@@ -75,7 +75,7 @@ const Index = () => {
             <img
               src={mainCastingImage}
               alt="Casting Call Caly II"
-              className="max-w-[450px] w-full h-auto rounded-3xl shadow-2xl animate-float-corner transition-transform duration-300 hover:scale-105"
+              className="max-w-[450px] w-full h-auto rounded-3xl shadow-2xl transition-transform duration-300 hover:scale-105"
             />
             
             {/* Corner floating images */}
