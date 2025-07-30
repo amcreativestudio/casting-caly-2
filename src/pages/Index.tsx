@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useCastingSubmission } from "@/hooks/useCastingSubmission";
+import Footer from "@/components/Footer";
 import mainCastingImage from "/lovable-uploads/76630543-379d-4720-80db-0fdf17fb2487.png";
 import stingImage from "/lovable-uploads/f20904c4-4bef-4647-b561-eaa8ea19da2c.png";
 import sting1Image from "/lovable-uploads/74f15216-322e-4783-aa80-04a89e4d6762.png";
 
 const Index = () => {
   const { toast } = useToast();
+  const { submitForm, loading } = useCastingSubmission();
   const [formData, setFormData] = useState({
     nome: "",
     telefone: "",
@@ -15,6 +18,9 @@ const Index = () => {
     perfil: "",
     motivacao: "",
   });
+
+  const [photosFiles, setPhotosFiles] = useState<FileList | null>(null);
+  const [cvFiles, setCvFiles] = useState<FileList | null>(null);
 
   // Script principal do site Casting Caly II - equivalente ao DOMContentLoaded
   useEffect(() => {
@@ -39,12 +45,53 @@ const Index = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Inscrição enviada!",
-      description: "Sua inscrição foi recebida. Entraremos em contato em breve.",
-    });
+
+    // Basic validations
+    if (!photosFiles || photosFiles.length < 2 || photosFiles.length > 5) {
+      toast({
+        title: "Erro nas fotos",
+        description: "É necessário enviar entre 2 e 5 fotos.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.motivacao.length < 150) {
+      toast({
+        title: "Motivação muito curta",
+        description: "A motivação deve ter pelo menos 150 caracteres.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await submitForm(formData, photosFiles, cvFiles);
+      
+      // Reset form on success
+      setFormData({
+        nome: "",
+        telefone: "",
+        idade: "",
+        sexo: "",
+        provincia: "",
+        perfil: "",
+        motivacao: "",
+      });
+      setPhotosFiles(null);
+      setCvFiles(null);
+
+      // Reset file inputs
+      const photosInput = document.getElementById("fotos") as HTMLInputElement;
+      const cvInput = document.getElementById("cv") as HTMLInputElement;
+      if (photosInput) photosInput.value = "";
+      if (cvInput) cvInput.value = "";
+
+    } catch (error) {
+      // Error is already handled in the hook
+    }
   };
 
   return (
@@ -317,6 +364,7 @@ const Index = () => {
                     accept="image/*"
                     multiple
                     required
+                    onChange={(e) => setPhotosFiles(e.target.files)}
                   />
                 </div>
                 <small className="text-white/80 text-xs mt-2 block">
@@ -338,6 +386,7 @@ const Index = () => {
                     name="cv"
                     className="absolute inset-0 w-full h-full cursor-pointer opacity-0 z-10"
                     accept="application/pdf,.doc,.docx"
+                    onChange={(e) => setCvFiles(e.target.files)}
                   />
                 </div>
                 <small className="text-white/80 text-xs mt-2 block">
@@ -368,14 +417,17 @@ const Index = () => {
             <div className="mt-1">
               <button
                 type="submit"
-                className="w-full h-16 glass-button text-white font-semibold rounded-2xl flex items-center justify-center text-lg tracking-tight"
+                disabled={loading}
+                className="w-full h-16 glass-button text-white font-semibold rounded-2xl flex items-center justify-center text-lg tracking-tight disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Enviar Inscrição
+                {loading ? "Enviando..." : "Enviar Inscrição"}
               </button>
             </div>
           </form>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 };
