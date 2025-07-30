@@ -11,6 +11,7 @@ const Index = () => {
   const { submitForm, loading } = useCastingSubmission();
   const [formData, setFormData] = useState({
     nome: "",
+    pais: "",
     telefone: "",
     idade: "",
     sexo: "",
@@ -45,6 +46,19 @@ const Index = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const getPhonePrefix = (country: string) => {
+    switch (country) {
+      case "Moçambique":
+        return "+258 ";
+      case "Portugal":
+        return "+351 ";
+      case "Angola":
+        return "+244 ";
+      default:
+        return "";
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -73,6 +87,7 @@ const Index = () => {
       // Reset form on success
       setFormData({
         nome: "",
+        pais: "",
         telefone: "",
         idade: "",
         sexo: "",
@@ -146,11 +161,6 @@ const Index = () => {
           <p className="text-center text-xl mb-3 text-gray-200 italic tracking-wide">
             Filme de ação moçambicano realizado por Alcy Caluamba
           </p>
-          <div className="text-center mb-6">
-            <p className="text-orange-400 font-semibold text-lg tracking-wide">
-              🌍 Aceitamos candidatos de Moçambique, Portugal e Angola
-            </p>
-          </div>
 
           <div className="flex flex-col md:flex-row justify-between gap-2 max-w-6xl mx-auto">
             <div className="flex-1 text-center p-2">
@@ -245,6 +255,27 @@ const Index = () => {
                 </div>
 
                 <div className="flex-1">
+                  <label htmlFor="pais" className="block text-white/90 text-sm font-medium mb-2">
+                    País*
+                  </label>
+                  <select
+                    id="pais"
+                    name="pais"
+                    value={formData.pais}
+                    onChange={handleInputChange}
+                    className="w-full h-[58px] px-4 py-4 glass-input text-white text-sm appearance-none bg-[url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'14\' height=\'14\' fill=\'rgba(255, 255, 255, 0.7)\' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M8 10L4 6h8l-4 4z\'/%3E%3C/svg%3E')] bg-no-repeat bg-[right_18px_center] pr-12 cursor-pointer"
+                    required
+                  >
+                    <option value="">Selecione</option>
+                    <option value="Moçambique">Moçambique</option>
+                    <option value="Portugal">Portugal</option>
+                    <option value="Angola">Angola</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex-1">
                   <label htmlFor="telefone" className="block text-white/90 text-sm font-medium mb-2">
                     Telefone*
                   </label>
@@ -255,13 +286,11 @@ const Index = () => {
                     value={formData.telefone}
                     onChange={handleInputChange}
                     className="w-full h-[58px] px-4 py-4 glass-input text-white text-sm"
-                    placeholder="Digite seu telefone"
+                    placeholder={formData.pais ? `${getPhonePrefix(formData.pais)}Digite seu número` : "Selecione o país primeiro"}
                     required
                   />
                 </div>
-              </div>
 
-              <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex-1">
                   <label htmlFor="idade" className="block text-white/90 text-sm font-medium mb-2">
                     Idade*
@@ -279,7 +308,9 @@ const Index = () => {
                     required
                   />
                 </div>
+              </div>
 
+              <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex-1">
                   <label htmlFor="sexo" className="block text-white/90 text-sm font-medium mb-2">
                     Sexo*
@@ -298,9 +329,7 @@ const Index = () => {
                     <option value="Outro">Outro</option>
                   </select>
                 </div>
-              </div>
 
-              <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex-1">
                   <label htmlFor="provincia" className="block text-white/90 text-sm font-medium mb-2">
                     Província*
@@ -327,7 +356,9 @@ const Index = () => {
                     <option value="Niassa">Niassa</option>
                   </select>
                 </div>
+              </div>
 
+              <div className="flex flex-col md:flex-row gap-6">
                 <div className="flex-1">
                   <label htmlFor="perfil" className="block text-white/90 text-sm font-medium mb-2">
                     Perfil*
