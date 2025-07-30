@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import castingBackground from "@/assets/casting-fundo.jpg";
 import alcyImage from "@/assets/alcyimg.jpg";
 import stingImage from "@/assets/sting.png";
 import sting1Image from "@/assets/sting1.png";
@@ -52,7 +51,7 @@ const Index = () => {
     <div 
       className="min-h-screen font-space-grotesk casting-body"
       style={{
-        backgroundImage: `url(${castingBackground})`,
+        backgroundImage: `url(/lovable-uploads/2f725c01-d538-4e72-9a45-2ce96e6538f8.png)`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
