@@ -174,6 +174,38 @@ const AdminDashboard = () => {
     await loadSubmissionPhotos(submission);
   };
 
+  const downloadCVFile = async (cvPath: string) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from("casting-files")
+        .download(cvPath);
+
+      if (error) throw error;
+
+      // Create blob URL and trigger download
+      const url = URL.createObjectURL(data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = cvPath.split("/").pop() || "cv-portfolio";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "Download iniciado",
+        description: "O arquivo CV/Portfólio está sendo baixado.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro no download",
+        description: "Não foi possível baixar o arquivo CV/Portfólio.",
+        variant: "destructive",
+      });
+      console.error("Error downloading CV file:", error);
+    }
+  };
+
   const generatePDF = async (submission: CastingSubmission) => {
     const doc = new jsPDF();
     
@@ -606,7 +638,17 @@ const AdminDashboard = () => {
               {selectedSubmission.cv_portfolio && (
                 <div>
                   <label className="text-sm font-medium text-gray-700">CV/Portfólio</label>
-                  <p className="text-gray-600">Arquivo anexado</p>
+                  <div className="mt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => downloadCVFile(selectedSubmission.cv_portfolio!)}
+                      className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Baixar CV/Portfólio
+                    </Button>
+                  </div>
                 </div>
               )}
 
