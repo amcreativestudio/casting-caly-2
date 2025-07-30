@@ -43,7 +43,13 @@ const Index = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Se mudou o país, limpar a província
+    if (name === "pais") {
+      setFormData(prev => ({ ...prev, [name]: value, provincia: "" }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const getPhonePrefix = (country: string) => {
@@ -56,6 +62,71 @@ const Index = () => {
         return "+244 ";
       default:
         return "";
+    }
+  };
+
+  const getProvincias = (country: string) => {
+    switch (country) {
+      case "Moçambique":
+        return [
+          "Maputo Cidade",
+          "Maputo Província",
+          "Gaza",
+          "Inhambane",
+          "Sofala",
+          "Manica",
+          "Tete",
+          "Zambézia",
+          "Nampula",
+          "Cabo Delgado",
+          "Niassa"
+        ];
+      case "Portugal":
+        return [
+          "Aveiro",
+          "Beja",
+          "Braga",
+          "Bragança",
+          "Castelo Branco",
+          "Coimbra",
+          "Évora",
+          "Faro",
+          "Guarda",
+          "Leiria",
+          "Lisboa",
+          "Portalegre",
+          "Porto",
+          "Santarém",
+          "Setúbal",
+          "Viana do Castelo",
+          "Vila Real",
+          "Viseu",
+          "Região Autónoma dos Açores",
+          "Região Autónoma da Madeira"
+        ];
+      case "Angola":
+        return [
+          "Luanda",
+          "Benguela",
+          "Huíla",
+          "Huambo",
+          "Uíge",
+          "Malanje",
+          "Lunda Norte",
+          "Lunda Sul",
+          "Moxico",
+          "Cunene",
+          "Namibe",
+          "Cuando Cubango",
+          "Bié",
+          "Zaire",
+          "Cabinda",
+          "Cuanza Norte",
+          "Cuanza Sul",
+          "Bengo"
+        ];
+      default:
+        return [];
     }
   };
 
@@ -341,19 +412,12 @@ const Index = () => {
                     onChange={handleInputChange}
                     className="w-full h-[58px] px-4 py-4 glass-input text-white text-sm appearance-none bg-[url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'14\' height=\'14\' fill=\'rgba(255, 255, 255, 0.7)\' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M8 10L4 6h8l-4 4z\'/%3E%3C/svg%3E')] bg-no-repeat bg-[right_18px_center] pr-12 cursor-pointer"
                     required
+                    disabled={!formData.pais}
                   >
-                    <option value="">Selecione</option>
-                    <option value="Maputo Cidade">Maputo Cidade</option>
-                    <option value="Maputo Província">Maputo Província</option>
-                    <option value="Gaza">Gaza</option>
-                    <option value="Inhambane">Inhambane</option>
-                    <option value="Sofala">Sofala</option>
-                    <option value="Manica">Manica</option>
-                    <option value="Tete">Tete</option>
-                    <option value="Zambézia">Zambézia</option>
-                    <option value="Nampula">Nampula</option>
-                    <option value="Cabo Delgado">Cabo Delgado</option>
-                    <option value="Niassa">Niassa</option>
+                    <option value="">{formData.pais ? "Selecione" : "Selecione primeiro o país"}</option>
+                    {getProvincias(formData.pais).map(provincia => (
+                      <option key={provincia} value={provincia}>{provincia}</option>
+                    ))}
                   </select>
                 </div>
               </div>
