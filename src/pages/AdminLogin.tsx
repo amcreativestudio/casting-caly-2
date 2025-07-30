@@ -114,7 +114,7 @@ const AdminLogin = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="alcymedia.app@gmail.com"
+                placeholder="admin@exemplo.com"
                 required
                 className="border-blue-200 focus:border-blue-500"
               />
