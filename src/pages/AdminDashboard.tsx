@@ -37,6 +37,7 @@ const AdminDashboard = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedSubmission, setSelectedSubmission] = useState<CastingSubmission | null>(null);
   const [submissionPhotos, setSubmissionPhotos] = useState<string[]>([]);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -532,10 +533,11 @@ const AdminDashboard = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    setSelectedSubmission(null);
-                    setSubmissionPhotos([]);
-                  }}
+                   onClick={() => {
+                     setSelectedSubmission(null);
+                     setSubmissionPhotos([]);
+                     setPreviewImage(null);
+                   }}
                 >
                   ✕
                 </Button>
@@ -586,16 +588,17 @@ const AdminDashboard = () => {
                 <label className="text-sm font-medium text-gray-700">Fotos ({selectedSubmission.photos.length})</label>
                 <div className="mt-2 grid grid-cols-2 gap-3">
                   {submissionPhotos.map((photoUrl, index) => (
-                    <div key={index} className="relative">
-                      <img
-                        src={photoUrl}
-                        alt={`Foto ${index + 1} de ${selectedSubmission.full_name}`}
-                        className="w-full h-32 object-cover rounded-lg border"
-                        onError={(e) => {
-                          e.currentTarget.src = '/placeholder.svg';
-                        }}
-                      />
-                    </div>
+                     <div key={index} className="relative">
+                       <img
+                         src={photoUrl}
+                         alt={`Foto ${index + 1} de ${selectedSubmission.full_name}`}
+                         className="w-full h-32 object-cover rounded-lg border cursor-pointer hover:opacity-80 transition-opacity"
+                         onClick={() => setPreviewImage(photoUrl)}
+                         onError={(e) => {
+                           e.currentTarget.src = '/placeholder.svg';
+                         }}
+                       />
+                     </div>
                   ))}
                 </div>
               </div>
@@ -610,10 +613,11 @@ const AdminDashboard = () => {
               <div className="flex justify-end space-x-2 pt-4 border-t">
                 <Button
                   variant="outline"
-                  onClick={() => {
-                    setSelectedSubmission(null);
-                    setSubmissionPhotos([]);
-                  }}
+                   onClick={() => {
+                     setSelectedSubmission(null);
+                     setSubmissionPhotos([]);
+                     setPreviewImage(null);
+                   }}
                 >
                   Fechar
                 </Button>
@@ -627,6 +631,31 @@ const AdminDashboard = () => {
               </div>
             </CardContent>
           </Card>
+        </div>
+      )}
+
+      {/* Modal de preview da imagem */}
+      {previewImage && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div className="relative max-w-4xl max-h-[90vh] w-full h-full flex items-center justify-center">
+            <img
+              src={previewImage}
+              alt="Preview da foto"
+              className="max-w-full max-h-full object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              className="absolute top-4 right-4 bg-white hover:bg-gray-100"
+              onClick={() => setPreviewImage(null)}
+            >
+              ✕
+            </Button>
+          </div>
         </div>
       )}
     </div>
