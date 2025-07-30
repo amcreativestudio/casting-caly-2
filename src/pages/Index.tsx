@@ -437,6 +437,7 @@ const Index = () => {
                   >
                     <option value="">Selecione</option>
                     <option value="Atores">Atores</option>
+                    <option value="Atores de arte marciais">Atores de arte marciais</option>
                     <option value="Modelos">Modelos</option>
                     <option value="Bailarinos">Bailarinos</option>
                     <option value="Criadores de conteúdo">Criadores de conteúdo</option>
