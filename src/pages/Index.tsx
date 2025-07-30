@@ -292,7 +292,7 @@ const Index = () => {
       </section>
 
       {/* Form Section with Glass Morphism */}
-      <section className="py-20 bg-gradient-to-b from-black/20 to-black/30 min-h-screen flex items-center justify-center">
+      <section className="py-20 min-h-screen flex items-center justify-center">
         <div className="max-w-2xl w-full mx-auto px-6">
           <form onSubmit={handleSubmit} className="glass-form space-y-8">
             {/* Form Header */}
