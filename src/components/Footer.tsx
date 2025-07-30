@@ -23,7 +23,7 @@ const Footer = () => {
             <h3 className="text-lg font-bold mb-4">Contato</h3>
             <div className="text-gray-300 text-sm space-y-2">
               <p>Diretor: Alcy Caluamba</p>
-              <p>Produção: Moçambique</p>
+              <p>Produção: AM Creative Studio</p>
               <p>Gênero: Ação</p>
             </div>
           </div>
