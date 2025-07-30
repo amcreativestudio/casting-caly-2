@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import castingBackground from "@/assets/casting-fundo.jpg";
 import alcyImage from "@/assets/alcyimg.jpg";
@@ -16,6 +16,24 @@ const Index = () => {
     perfil: "",
     motivacao: "",
   });
+
+  // Script principal do site Casting Caly II - equivalente ao DOMContentLoaded
+  useEffect(() => {
+    console.log('Casting Caly II - Site carregado com sucesso!');
+    
+    // Funcionalidades adicionais que podem ser úteis:
+    // - Scroll suave para seções
+    // - Verificação de dispositivo móvel
+    // - Inicialização de animações específicas
+    
+    // Adicionar classe para animações CSS se necessário
+    document.body.classList.add('site-loaded');
+    
+    // Limpar na desmontagem
+    return () => {
+      document.body.classList.remove('site-loaded');
+    };
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
