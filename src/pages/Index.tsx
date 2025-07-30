@@ -146,6 +146,11 @@ const Index = () => {
           <p className="text-center text-xl mb-3 text-gray-200 italic tracking-wide">
             Filme de ação moçambicano realizado por Alcy Caluamba
           </p>
+          <div className="text-center mb-6">
+            <p className="text-orange-400 font-semibold text-lg tracking-wide">
+              🌍 Aceitamos candidatos de Moçambique, Portugal e Angola
+            </p>
+          </div>
 
           <div className="flex flex-col md:flex-row justify-between gap-2 max-w-6xl mx-auto">
             <div className="flex-1 text-center p-2">
