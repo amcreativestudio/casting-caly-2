@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Lock, Eye, EyeOff } from "lucide-react";
+import { Lock, Eye, EyeOff, LockKeyhole } from "lucide-react";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -90,16 +90,23 @@ const AdminLogin = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-xl border-blue-100">
         <CardHeader className="text-center space-y-2">
-          <div className="flex justify-center">
+          <div className="flex justify-center items-center relative">
             <div className="p-3 bg-blue-100 rounded-full">
               <Lock className="h-8 w-8 text-blue-600" />
             </div>
+            <button
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="absolute -top-2 -right-2 p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+              title={isSignUp ? "Mudar para Login" : "Mudar para Cadastro"}
+            >
+              <LockKeyhole className="h-4 w-4 text-gray-600" />
+            </button>
           </div>
           <CardTitle className="text-2xl font-bold text-gray-800">
-            Área Administrativa
+            {isSignUp ? "Criar Conta Admin" : "Área Administrativa"}
           </CardTitle>
           <p className="text-gray-600 text-sm">
-            Acesso restrito ao painel de controle
+            {isSignUp ? "Cadastrar novo administrador" : "Acesso restrito ao painel de controle"}
           </p>
         </CardHeader>
 
@@ -152,15 +159,6 @@ const AdminLogin = () => {
               {loading ? (isSignUp ? "Criando conta..." : "Entrando...") : (isSignUp ? "Criar conta" : "Entrar")}
             </Button>
           </form>
-
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-blue-600 hover:text-blue-700 underline"
-            >
-              {isSignUp ? "Já tem conta? Fazer login" : "Primeira vez? Criar conta"}
-            </button>
-          </div>
 
           <div className="mt-6 text-center">
             <button
