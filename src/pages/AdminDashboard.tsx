@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Download, Users, FileText, Calendar, Phone, MapPin, Eye, Trash2 } from "lucide-react";
+import { LogOut, Download, Users, FileText, Calendar, Phone, MapPin, Eye, Trash2, RefreshCw } from "lucide-react";
 import jsPDF from "jspdf";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -34,6 +34,7 @@ const AdminDashboard = () => {
   const [submissions, setSubmissions] = useState<CastingSubmission[]>([]);
   const [adminProfile, setAdminProfile] = useState<AdminProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [selectedSubmission, setSelectedSubmission] = useState<CastingSubmission | null>(null);
   const [submissionPhotos, setSubmissionPhotos] = useState<string[]>([]);
   const navigate = useNavigate();
@@ -128,6 +129,25 @@ const AdminDashboard = () => {
         description: error.message,
         variant: "destructive",
       });
+    }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await loadSubmissions();
+      toast({
+        title: "Dados atualizados",
+        description: "As informações foram recarregadas com sucesso.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro ao atualizar",
+        description: "Não foi possível recarregar os dados.",
+        variant: "destructive",
+      });
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -353,6 +373,16 @@ const AdminDashboard = () => {
               <Badge variant="secondary" className="bg-blue-100 text-blue-800">
                 {adminProfile?.role}
               </Badge>
+              <Button
+                onClick={handleRefresh}
+                variant="outline"
+                size="sm"
+                disabled={refreshing}
+                className="border-blue-200 text-blue-700 hover:bg-blue-50"
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+                {refreshing ? 'Atualizando...' : 'Atualizar'}
+              </Button>
               <Button
                 onClick={handleLogout}
                 variant="outline"
