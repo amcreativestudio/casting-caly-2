@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import mainCastingImage from "/lovable-uploads/76630543-379d-4720-80db-0fdf17fb2487.png";
-import stingImage from "@/assets/sting.png";
-import sting1Image from "@/assets/sting1.png";
+import stingImage from "/lovable-uploads/f20904c4-4bef-4647-b561-eaa8ea19da2c.png";
+import sting1Image from "/lovable-uploads/74f15216-322e-4783-aa80-04a89e4d6762.png";
 
 const Index = () => {
   const { toast } = useToast();
@@ -81,12 +81,12 @@ const Index = () => {
             {/* Corner floating images */}
             <img
               src={stingImage}
-              alt="Sting"
+              alt="Claquete Cinema"
               className="absolute top-4 right-4 w-24 h-auto z-10 rounded-xl opacity-90 animate-float-corner"
             />
             <img
               src={sting1Image}
-              alt="Sting"
+              alt="Claquete Cinema"
               className="absolute bottom-4 left-4 w-24 h-auto z-10 rounded-xl opacity-90 animate-float-corner-bottom"
             />
           </div>
