@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Lock, Eye, EyeOff, LockKeyhole } from "lucide-react";
+import { Lock, Eye, EyeOff } from "lucide-react";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -90,16 +90,13 @@ const AdminLogin = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-xl border-blue-100">
         <CardHeader className="text-center space-y-2">
-          <div className="flex justify-center items-center relative">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <Lock className="h-8 w-8 text-blue-600" />
-            </div>
+          <div className="flex justify-center">
             <button
               onClick={() => setIsSignUp(!isSignUp)}
-              className="absolute -top-2 -right-2 p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+              className="p-3 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors"
               title={isSignUp ? "Mudar para Login" : "Mudar para Cadastro"}
             >
-              <LockKeyhole className="h-4 w-4 text-gray-600" />
+              <Lock className="h-8 w-8 text-blue-600" />
             </button>
           </div>
           <CardTitle className="text-2xl font-bold text-gray-800">
