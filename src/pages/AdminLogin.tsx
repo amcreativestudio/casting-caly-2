@@ -12,44 +12,72 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      let authResult;
+      
+      if (isSignUp) {
+        // Sign up flow - só permitir o email específico
+        if (email !== 'alcymedia.app@gmail.com') {
+          throw new Error("Apenas o administrador autorizado pode se registrar.");
+        }
+        
+        authResult = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: window.location.origin
+          }
+        });
+      } else {
+        // Sign in flow
+        authResult = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+      }
 
+      const { data, error } = authResult;
       if (error) throw error;
 
       if (data.user) {
-        // Check if user is admin
-        const { data: adminProfile, error: profileError } = await supabase
-          .from("admin_profiles")
-          .select("*")
-          .eq("user_id", data.user.id)
-          .single();
+        if (isSignUp) {
+          toast({
+            title: "Conta criada com sucesso",
+            description: "Você pode fazer login agora.",
+          });
+          setIsSignUp(false);
+        } else {
+          // Check if user is admin
+          const { data: adminProfile, error: profileError } = await supabase
+            .from("admin_profiles")
+            .select("*")
+            .eq("user_id", data.user.id)
+            .single();
 
-        if (profileError || !adminProfile) {
-          await supabase.auth.signOut();
-          throw new Error("Acesso negado. Você não tem permissões administrativas.");
+          if (profileError || !adminProfile) {
+            await supabase.auth.signOut();
+            throw new Error("Acesso negado. Você não tem permissões administrativas.");
+          }
+
+          toast({
+            title: "Login realizado com sucesso",
+            description: `Bem-vindo, ${adminProfile.name}!`,
+          });
+
+          navigate("/admin/dashboard");
         }
-
-        toast({
-          title: "Login realizado com sucesso",
-          description: `Bem-vindo, ${adminProfile.name}!`,
-        });
-
-        navigate("/admin/dashboard");
       }
     } catch (error: any) {
       toast({
-        title: "Erro no login",
+        title: isSignUp ? "Erro no cadastro" : "Erro no login",
         description: error.message,
         variant: "destructive",
       });
@@ -76,7 +104,7 @@ const AdminLogin = () => {
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleAuth} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium text-gray-700">
                 E-mail
@@ -86,7 +114,7 @@ const AdminLogin = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@exemplo.com"
+                placeholder="alcymedia.app@gmail.com"
                 required
                 className="border-blue-200 focus:border-blue-500"
               />
@@ -121,9 +149,18 @@ const AdminLogin = () => {
               className="w-full bg-blue-600 hover:bg-blue-700"
               disabled={loading}
             >
-              {loading ? "Entrando..." : "Entrar"}
+              {loading ? (isSignUp ? "Criando conta..." : "Entrando...") : (isSignUp ? "Criar conta" : "Entrar")}
             </Button>
           </form>
+
+          <div className="mt-4 text-center">
+            <button
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="text-sm text-blue-600 hover:text-blue-700 underline"
+            >
+              {isSignUp ? "Já tem conta? Fazer login" : "Primeira vez? Criar conta"}
+            </button>
+          </div>
 
           <div className="mt-6 text-center">
             <button
