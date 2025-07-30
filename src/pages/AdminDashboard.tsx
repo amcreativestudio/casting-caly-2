@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Download, Users, FileText, Calendar, Phone, MapPin, Eye } from "lucide-react";
+import { LogOut, Download, Users, FileText, Calendar, Phone, MapPin, Eye, Trash2 } from "lucide-react";
 import jsPDF from "jspdf";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -98,6 +98,35 @@ const AdminDashboard = () => {
       title: "Logout realizado",
       description: "Você foi desconectado com sucesso.",
     });
+  };
+
+  const handleDeleteSubmission = async (submissionId: string, submissionName: string) => {
+    if (!confirm(`Tem certeza que deseja deletar a inscrição de ${submissionName}?`)) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("casting_submissions")
+        .delete()
+        .eq("id", submissionId);
+
+      if (error) throw error;
+
+      // Remover da lista local
+      setSubmissions(submissions.filter(s => s.id !== submissionId));
+      
+      toast({
+        title: "Submissão deletada",
+        description: `A inscrição de ${submissionName} foi removida com sucesso.`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao deletar",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   const generatePDF = (submission: CastingSubmission) => {
@@ -327,25 +356,33 @@ const AdminDashboard = () => {
                       <TableCell>
                         {format(new Date(submission.created_at), "dd/MM/yyyy", { locale: ptBR })}
                       </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setSelectedSubmission(submission)}
-                            className="border-blue-200 text-blue-700 hover:bg-blue-50"
-                          >
-                            <Eye className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            onClick={() => generatePDF(submission)}
-                            className="bg-blue-600 hover:bg-blue-700"
-                          >
-                            <Download className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </TableCell>
+                       <TableCell>
+                         <div className="flex items-center space-x-2">
+                           <Button
+                             size="sm"
+                             variant="outline"
+                             onClick={() => setSelectedSubmission(submission)}
+                             className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                           >
+                             <Eye className="h-3 w-3" />
+                           </Button>
+                           <Button
+                             size="sm"
+                             onClick={() => generatePDF(submission)}
+                             className="bg-blue-600 hover:bg-blue-700"
+                           >
+                             <Download className="h-3 w-3" />
+                           </Button>
+                           <Button
+                             size="sm"
+                             variant="outline"
+                             onClick={() => handleDeleteSubmission(submission.id, submission.full_name)}
+                             className="border-red-200 text-red-700 hover:bg-red-50"
+                           >
+                             <Trash2 className="h-3 w-3" />
+                           </Button>
+                         </div>
+                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
