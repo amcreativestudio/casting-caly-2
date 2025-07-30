@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import alcyImage from "@/assets/alcyimg.jpg";
+import mainCastingImage from "/lovable-uploads/76630543-379d-4720-80db-0fdf17fb2487.png";
 import stingImage from "@/assets/sting.png";
 import sting1Image from "@/assets/sting1.png";
 
@@ -73,8 +73,8 @@ const Index = () => {
           {/* Main floating image */}
           <div className="relative inline-block">
             <img
-              src={alcyImage}
-              alt="Alcy Image"
+              src={mainCastingImage}
+              alt="Casting Call Caly II"
               className="max-w-[450px] w-full h-auto rounded-3xl shadow-2xl animate-float transition-transform duration-300 hover:scale-105"
             />
             
