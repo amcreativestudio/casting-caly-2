@@ -152,7 +152,7 @@ const AdminDashboard = () => {
     await loadSubmissionPhotos(submission);
   };
 
-  const generatePDF = (submission: CastingSubmission) => {
+  const generatePDF = async (submission: CastingSubmission) => {
     const doc = new jsPDF();
     
     // Header
@@ -193,22 +193,95 @@ const AdminDashboard = () => {
     doc.setFont("helvetica", "normal");
     const motivationLines = doc.splitTextToSize(submission.motivation, 170);
     doc.text(motivationLines, 20, yPosition);
-    yPosition += lineHeight * motivationLines.length + 10;
+    yPosition += lineHeight * motivationLines.length + 15;
     
-    // Photos info
-    doc.setFont("helvetica", "bold");
-    doc.text(`Fotos anexadas: ${submission.photos.length}`, 20, yPosition);
-    yPosition += lineHeight;
+    // Photos section
+    if (submission.photos && submission.photos.length > 0) {
+      doc.setFont("helvetica", "bold");
+      doc.text(`Fotos (${submission.photos.length}):`, 20, yPosition);
+      yPosition += lineHeight + 5;
+      
+      try {
+        // Load and add photos to PDF
+        for (let i = 0; i < submission.photos.length; i++) {
+          const photoPath = submission.photos[i];
+          
+          // Get public URL for the photo
+          const { data } = supabase.storage
+            .from("casting-files")
+            .getPublicUrl(photoPath);
+            
+          if (data.publicUrl) {
+            try {
+              // Check if we need a new page
+              if (yPosition > 200) {
+                doc.addPage();
+                yPosition = 30;
+              }
+              
+              // Add photo to PDF
+              const response = await fetch(data.publicUrl);
+              const blob = await response.blob();
+              const reader = new FileReader();
+              
+              await new Promise((resolve, reject) => {
+                reader.onload = () => {
+                  try {
+                    const base64 = reader.result as string;
+                    // Add image (adjust size and position)
+                    doc.addImage(base64, 'JPEG', 20, yPosition, 60, 45);
+                    
+                    // Add photo number
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "normal");
+                    doc.text(`Foto ${i + 1}`, 85, yPosition + 20);
+                    
+                    resolve(true);
+                  } catch (error) {
+                    console.error("Error adding image to PDF:", error);
+                    resolve(true); // Continue even if image fails
+                  }
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+              });
+              
+              yPosition += 55; // Space for next image
+            } catch (error) {
+              console.error("Error loading photo:", error);
+              // Add text instead if photo fails to load
+              doc.setFontSize(10);
+              doc.text(`Foto ${i + 1}: Erro ao carregar`, 20, yPosition);
+              yPosition += lineHeight;
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error processing photos:", error);
+        doc.setFont("helvetica", "normal");
+        doc.text("Erro ao carregar fotos", 20, yPosition);
+      }
+      
+      yPosition += 10;
+    }
     
+    // CV info
     if (submission.cv_portfolio) {
+      if (yPosition > 250) {
+        doc.addPage();
+        yPosition = 30;
+      }
+      doc.setFont("helvetica", "bold");
       doc.text("CV/Portfólio: Anexado", 20, yPosition);
+      yPosition += lineHeight;
     }
     
     // Footer
     doc.setFontSize(10);
     doc.setFont("helvetica", "italic");
-    doc.text("Casting Caly II - Filme de Ação Moçambicano", 20, 280);
-    doc.text("Diretor: Alcy Caluamba", 20, 290);
+    const footerY = doc.internal.pageSize.height - 20;
+    doc.text("Casting Caly II - Filme de Ação Moçambicano", 20, footerY - 10);
+    doc.text("Diretor: Alcy Caluamba - Produção: AM Creative Studio", 20, footerY);
     
     doc.save(`casting-${submission.full_name.replace(/\s+/g, "-").toLowerCase()}.pdf`);
   };
